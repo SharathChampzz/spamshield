@@ -5,11 +5,25 @@
         "description": "API documentation",
         "termsOfService": "https://www.google.com/policies/terms/",
         "contact": {
-            "email": "contact@yourapi.local"
+            "email": "champzz@here.co"
         },
         "license": {
             "name": "BSD License"
         },
+        "components": {
+            "securitySchemes": {
+                "BearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT"
+                }
+            }
+        },
+        "security": [
+            {
+                "BearerAuth": []
+            }
+        ],
         "version": "v1"
     },
     "host": "127.0.0.1:8000",
@@ -24,16 +38,44 @@
         "application/json"
     ],
     "securityDefinitions": {
-        "Basic": {
-            "type": "basic"
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     },
     "security": [
         {
-            "Basic": []
+            "Bearer": []
         }
     ],
     "paths": {
+        "/details/{phone_number}/": {
+            "get": {
+                "operationId": "details_read",
+                "description": "View to get details of a phone number.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/PhoneDetails"
+                        }
+                    }
+                },
+                "tags": [
+                    "details"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "phone_number",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
         "/login/": {
             "post": {
                 "operationId": "login_create",
@@ -65,7 +107,7 @@
         "/profile/": {
             "get": {
                 "operationId": "profile_read",
-                "description": "",
+                "description": "View for user profile.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -81,7 +123,7 @@
             },
             "put": {
                 "operationId": "profile_update",
-                "description": "",
+                "description": "View for user profile.",
                 "parameters": [
                     {
                         "name": "data",
@@ -106,7 +148,7 @@
             },
             "patch": {
                 "operationId": "profile_partial_update",
-                "description": "",
+                "description": "View for user profile.",
                 "parameters": [
                     {
                         "name": "data",
@@ -134,7 +176,7 @@
         "/register/": {
             "post": {
                 "operationId": "register_create",
-                "description": "",
+                "description": "View for user registration.",
                 "parameters": [
                     {
                         "name": "data",
@@ -155,6 +197,254 @@
                 },
                 "tags": [
                     "register"
+                ]
+            },
+            "parameters": []
+        },
+        "/search-by-name/": {
+            "get": {
+                "operationId": "search-by-name_list",
+                "description": "View to search for contacts or users based on a query string.",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search query string",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/SearchResult"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "search-by-name"
+                ]
+            },
+            "parameters": []
+        },
+        "/search-by-phone/": {
+            "get": {
+                "operationId": "search-by-phone_list",
+                "description": "View to search for contacts or users based on a phone number.",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search query string",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/SearchResult"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "search-by-phone"
+                ]
+            },
+            "parameters": []
+        },
+        "/search/": {
+            "get": {
+                "operationId": "search_list",
+                "description": "View to search for contacts or users based on a query string.",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search query string",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/SearchResult"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "search"
+                ]
+            },
+            "parameters": []
+        },
+        "/spam/": {
+            "post": {
+                "operationId": "spam_create",
+                "description": "View to report a phone number as spam.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SpamReport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/SpamReport"
+                        }
+                    }
+                },
+                "tags": [
+                    "spam"
+                ]
+            },
+            "parameters": []
+        },
+        "/spam/unmark/{phone_number}/": {
+            "put": {
+                "operationId": "spam_unmark_update",
+                "description": "View to unmark a phone number as spam.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SpamReport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/SpamReport"
+                        }
+                    }
+                },
+                "tags": [
+                    "spam"
+                ]
+            },
+            "patch": {
+                "operationId": "spam_unmark_partial_update",
+                "description": "View to unmark a phone number as spam.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SpamReport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/SpamReport"
+                        }
+                    }
+                },
+                "tags": [
+                    "spam"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "phone_number",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/sync/": {
+            "post": {
+                "operationId": "sync_create",
+                "description": "View to sync contacts from the user's device.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BulkContact"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/BulkContact"
+                        }
+                    }
+                },
+                "tags": [
+                    "sync"
                 ]
             },
             "parameters": []
@@ -189,6 +479,56 @@
         }
     },
     "definitions": {
+        "PhoneDetails": {
+            "required": [
+                "phone_number",
+                "name",
+                "spam_status",
+                "comment",
+                "reported_at"
+            ],
+            "type": "object",
+            "properties": {
+                "phone_number": {
+                    "title": "Phone number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "spam_status": {
+                    "title": "Spam status",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "category": {
+                    "title": "Category",
+                    "type": "string",
+                    "default": "unclassified",
+                    "minLength": 1
+                },
+                "comment": {
+                    "title": "Comment",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-nullable": true
+                },
+                "added_by_user": {
+                    "title": "Added by user",
+                    "type": "boolean",
+                    "default": false
+                },
+                "reported_at": {
+                    "title": "Reported at",
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
+                }
+            }
+        },
         "TokenObtainPair": {
             "required": [
                 "phone_number",
@@ -267,7 +607,6 @@
                 "phone_number": {
                     "title": "Phone number",
                     "type": "string",
-                    "maxLength": 15,
                     "minLength": 1
                 },
                 "email": {
@@ -281,6 +620,118 @@
                     "title": "Password",
                     "type": "string",
                     "minLength": 1
+                }
+            }
+        },
+        "SearchResult": {
+            "required": [
+                "name",
+                "phone_number"
+            ],
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "phone_number": {
+                    "title": "Phone number",
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 1
+                },
+                "spam_likelihood": {
+                    "title": "Spam likelihood",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "email": {
+                    "title": "Email",
+                    "type": "string",
+                    "readOnly": true
+                }
+            }
+        },
+        "SpamReport": {
+            "required": [
+                "phone_number"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "type": "string",
+                    "format": "uuid",
+                    "readOnly": true
+                },
+                "phone_number": {
+                    "title": "Phone number",
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 1
+                },
+                "category": {
+                    "title": "Category",
+                    "type": "string",
+                    "enum": [
+                        "unclassified",
+                        "fraud",
+                        "telemarketer"
+                    ]
+                },
+                "comment": {
+                    "title": "Comment",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "reported_at": {
+                    "title": "Reported at",
+                    "type": "string",
+                    "format": "date-time",
+                    "readOnly": true
+                }
+            }
+        },
+        "Contact": {
+            "required": [
+                "name",
+                "phone_number"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "type": "string",
+                    "format": "uuid",
+                    "readOnly": true
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "phone_number": {
+                    "title": "Phone number",
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 1
+                }
+            }
+        },
+        "BulkContact": {
+            "required": [
+                "contacts"
+            ],
+            "type": "object",
+            "properties": {
+                "contacts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Contact"
+                    }
                 }
             }
         },

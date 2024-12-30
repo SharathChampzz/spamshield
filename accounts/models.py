@@ -1,14 +1,19 @@
+"""Custom user model and user manager"""
+
+import uuid
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
 from django.db import models
-import uuid
 
 
 class UserManager(BaseUserManager):
+    """Custom user manager"""
+
     def create_user(self, phone_number, password=None, **extra_fields):
+        """Create and return a new user"""
         if not phone_number:
             raise ValueError("Phone number is required")
 
@@ -18,13 +23,18 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, phone_number, password=None, **extra_fields):
+        """Create and return a new superuser"""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(phone_number, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """Custom user model"""
+
     class Status(models.TextChoices):
+        """User status choices"""
+
         ENABLED = "enabled", "Enabled"
         DISABLED = "disabled", "Disabled"
 
@@ -46,6 +56,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ["name"]
 
     class Meta:
+        """Meta options"""
+
         db_table = "users"
         indexes = [
             models.Index(fields=["name"]),

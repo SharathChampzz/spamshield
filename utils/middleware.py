@@ -1,5 +1,7 @@
-import time
+"""Middleware to log request and response data."""
+
 import logging
+import time
 import json
 from django.utils.deprecation import MiddlewareMixin
 
@@ -7,10 +9,14 @@ logger = logging.getLogger("api_logger")
 
 
 class RequestLoggingMiddleware(MiddlewareMixin):
+    """Middleware to log request and response data."""
+
     def process_request(self, request):
+        """Log the request data."""
         request.start_time = time.time()
 
     def process_response(self, request, response):
+        """Log the response data."""
         if hasattr(request, "start_time"):
             total_time = time.time() - request.start_time
 

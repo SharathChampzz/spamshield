@@ -1,19 +1,28 @@
+"""Serializers for the contacts app."""
+
 from rest_framework import serializers
-from .models import Contact, SpamReport
 from accounts.models import User
+from .models import Contact, SpamReport
 
 
 class ContactSerializer(serializers.ModelSerializer):
+    """Serializer for the contact model."""
+
     class Meta:
+        """Meta options."""
+
         model = Contact
         fields = ("id", "name", "phone_number")
         read_only_fields = ("id",)
 
 
 class BulkContactSerializer(serializers.Serializer):
+    """Serializer for creating multiple contacts."""
+
     contacts = ContactSerializer(many=True)
 
     def create(self, validated_data):
+        """Create and return a list of contacts."""
         user = self.context["request"].user
         contacts_data = validated_data.get("contacts", [])
         contacts = []
@@ -30,21 +39,30 @@ class BulkContactSerializer(serializers.Serializer):
 
 
 class SpamReportSerializer(serializers.ModelSerializer):
+    """Serializer for the spam report model."""
+
     class Meta:
+        """Meta options."""
+
         model = SpamReport
         fields = ("id", "phone_number", "category", "comment", "reported_at")
         read_only_fields = ("id", "reported_at")
 
 
 class SearchResultSerializer(serializers.ModelSerializer):
+    """Serializer for search results."""
+
     spam_likelihood = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
 
     class Meta:
+        """Meta options."""
+
         model = User
         fields = ("name", "phone_number", "spam_likelihood", "email")
 
     def get_spam_likelihood(self, obj):
+        """Return the spam likelihood of the phone number."""
         if isinstance(obj, User):
             phone_number = obj.phone_number
         else:
@@ -58,6 +76,7 @@ class SearchResultSerializer(serializers.ModelSerializer):
         return "SPAM"
 
     def get_email(self, obj):
+        """Return the email of the user if in contacts."""
         request = self.context.get("request")
         if not request or not request.user.is_authenticated:
             return None
@@ -72,6 +91,8 @@ class SearchResultSerializer(serializers.ModelSerializer):
 
 
 class PhoneDetailsSerializer(serializers.Serializer):
+    """Serializer for phone details."""
+
     phone_number = serializers.CharField()
     name = serializers.CharField()
     spam_status = serializers.CharField()

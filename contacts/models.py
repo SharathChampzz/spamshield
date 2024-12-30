@@ -1,9 +1,13 @@
-from django.db import models
+"""Models for the contacts app."""
+
 import uuid
+from django.db import models
 from accounts.models import User
 
 
 class Contact(models.Model):
+    """Model to store user contacts."""
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, db_index=True)
     phone_number = models.CharField(max_length=15, db_index=True)
@@ -16,6 +20,8 @@ class Contact(models.Model):
     objects = models.Manager()
 
     class Meta:
+        """Meta options."""
+
         db_table = "contacts"
         indexes = [
             models.Index(fields=["name"]),
@@ -24,11 +30,16 @@ class Contact(models.Model):
         unique_together = ["phone_number", "added_by"]
 
     def __str__(self):
+        """Return string representation."""
         return f"{self.name} ({self.phone_number})"
 
 
 class SpamReport(models.Model):
+    """Model to store spam reports."""
+
     class Category(models.TextChoices):
+        """Spam report categories."""
+
         UNCLASSIFIED = "unclassified", "Unclassified"
         FRAUD = "fraud", "Fraud"
         TELEMARKETER = "telemarketer", "Telemarketer"
@@ -47,6 +58,8 @@ class SpamReport(models.Model):
     objects = models.Manager()
 
     class Meta:
+        """Meta options."""
+
         db_table = "spam_reports"
         indexes = [
             models.Index(fields=["phone_number"]),

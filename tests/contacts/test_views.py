@@ -1,14 +1,20 @@
-import pytest
+"""Tests for the views of the contacts app."""
+
+import logging
 from django.urls import reverse
 from rest_framework import status
 from tests.factories.factories import UserFactory, ContactFactory, SpamReportFactory
-import logging
+import pytest
 
 logger = logging.getLogger(__name__)
 
+
 @pytest.mark.django_db
 class TestSearchViews:
+    """Tests for the search views."""
+
     def test_search_by_name(self, authenticated_client):
+        """Test searching for contacts or users by name."""
         client, user = authenticated_client
         contact = ContactFactory(added_by=user, name="John Doe")
         other_user = UserFactory(name="John Smith")
@@ -23,6 +29,7 @@ class TestSearchViews:
         assert "John Smith" in names
 
     def test_search_by_phone(self, authenticated_client):
+        """Test searching for contacts or users by phone number."""
         client, user = authenticated_client
         contact = ContactFactory(added_by=user)
 
@@ -38,7 +45,10 @@ class TestSearchViews:
 
 @pytest.mark.django_db
 class TestSpamReporting:
+    """Tests for the spam reporting views."""
+
     def test_mark_as_spam(self, authenticated_client):
+        """Test marking a phone number as spam."""
         client, user = authenticated_client
         url = reverse("spam-report")
         data = {
@@ -50,6 +60,7 @@ class TestSpamReporting:
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_unmark_spam(self, authenticated_client):
+        """Test unmarking a phone number as spam."""
         client, user = authenticated_client
         spam_report = SpamReportFactory(reporter=user)
         url = reverse("unmark-spam", kwargs={"phone_number": spam_report.phone_number})
@@ -59,7 +70,10 @@ class TestSpamReporting:
 
 @pytest.mark.django_db
 class TestContactSync:
+    """Tests for the contact sync view."""
+
     def test_sync_contacts(self, authenticated_client):
+        """Test syncing contacts from the user's device."""
         client, user = authenticated_client
         url = reverse("contact-sync")
         data = {
@@ -73,6 +87,7 @@ class TestContactSync:
         assert user.contacts.count() == 2
 
     def test_update_existing_contact(self, authenticated_client):
+        """Test updating an existing contact."""
         client, user = authenticated_client
         contact = ContactFactory(added_by=user, name="Old Name")
         url = reverse("contact-sync")
@@ -87,7 +102,10 @@ class TestContactSync:
 
 @pytest.mark.django_db
 class TestPhoneDetails:
+    """Tests for the phone details view."""
+
     def test_get_phone_details(self, authenticated_client):
+        """Test getting details of a phone number."""
         client, user = authenticated_client
         contact = ContactFactory(added_by=user)
         spam_report = SpamReportFactory(phone_number=contact.phone_number)

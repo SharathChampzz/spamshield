@@ -1,21 +1,19 @@
-from django.db.models import Q, Count, Value, CharField
-from django.db.models.functions import Concat
+"""Views for the contacts app."""
+
+from django.db.models import Q
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import Contact, SpamReport
 from accounts.models import User
+from .models import Contact, SpamReport
 from .serializers import (
-    ContactSerializer,
     SpamReportSerializer,
     SearchResultSerializer,
     PhoneDetailsSerializer,
     BulkContactSerializer,
 )
-
-
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 
 class SearchView(generics.ListAPIView):
@@ -80,6 +78,8 @@ class SearchView(generics.ListAPIView):
 
 
 class PhoneSearchView(generics.ListAPIView):
+    """View to search for contacts or users based on a phone number."""
+
     serializer_class = SearchResultSerializer
     permission_classes = [IsAuthenticated]
 
@@ -134,6 +134,8 @@ class PhoneSearchView(generics.ListAPIView):
 
 
 class SpamReportView(generics.CreateAPIView):
+    """View to report a phone number as spam."""
+
     serializer_class = SpamReportSerializer
     permission_classes = [IsAuthenticated]
 
@@ -158,6 +160,8 @@ class UnmarkSpamView(generics.UpdateAPIView):
 
 
 class ContactSyncView(generics.CreateAPIView):
+    """View to sync contacts from the user's device."""
+
     serializer_class = BulkContactSerializer
     permission_classes = [IsAuthenticated]
 
@@ -171,6 +175,8 @@ class ContactSyncView(generics.CreateAPIView):
 
 
 class PhoneDetailsView(generics.RetrieveAPIView):
+    """View to get details of a phone number."""
+
     serializer_class = PhoneDetailsSerializer
     permission_classes = [IsAuthenticated]
 
