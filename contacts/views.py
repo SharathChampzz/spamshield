@@ -57,8 +57,6 @@ class SearchView(generics.ListAPIView):
     def get_queryset(self):
         query = self.request.query_params.get("query", "")
         print(f"Query ==>: {query}")
-        # if not query:
-        #     return Contact.objects.none()
 
         # Search in User table
         user_results = User.objects.filter(
@@ -72,7 +70,13 @@ class SearchView(generics.ListAPIView):
 
         # Combine the results, with User results first
         combined_results = list(user_results) + list(contact_results)
-        return combined_results
+
+        # Pagination
+        page = self.request.query_params.get("page", 1)
+        size = self.request.query_params.get("size", 10)
+        start = (int(page) - 1) * int(size)
+        end = start + int(size)
+        return combined_results[start:end]
 
 
 class PhoneSearchView(generics.ListAPIView):
@@ -112,13 +116,21 @@ class PhoneSearchView(generics.ListAPIView):
         if not phone_number:
             return User.objects.none()
 
-        # First try to find a registered user
+        # Search in User table
         user_results = User.objects.filter(phone_number__icontains=phone_number)
-        if user_results.exists():
-            return user_results
 
-        # If no user found, return all contacts with this number
-        return Contact.objects.filter(phone_number__icontains=phone_number)
+        # Search in Contact table
+        contact_results = Contact.objects.filter(phone_number__icontains=phone_number)
+
+        # Combine the results, with User results first
+        combined_results = list(user_results) + list(contact_results)
+
+        # Pagination
+        page = self.request.query_params.get("page", 1)
+        size = self.request.query_params.get("size", 10)
+        start = (int(page) - 1) * int(size)
+        end = start + int(size)
+        return combined_results[start:end]
 
 
 class SpamReportView(generics.CreateAPIView):
