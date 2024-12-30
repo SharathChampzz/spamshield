@@ -1,7 +1,5 @@
 """This module contains the views for the accounts app."""
 
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -34,32 +32,6 @@ class UserLoginView(TokenObtainPairView):
     """View for user login."""
 
     serializer_class = UserLoginSerializer
-
-    @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "phone_number": openapi.Schema(type=openapi.TYPE_STRING),
-                "password": openapi.Schema(type=openapi.TYPE_STRING),
-            },
-            required=["phone_number", "password"],
-        ),
-        responses={
-            200: openapi.Response(
-                "Token",
-                openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        "access": openapi.Schema(type=openapi.TYPE_STRING),
-                        "refresh": openapi.Schema(type=openapi.TYPE_STRING),
-                    },
-                ),
-            )
-        },
-    )
-    def post(self, request, *args, **kwargs):
-        """Login a user and return the token."""
-        return super().post(request, *args, **kwargs)
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):

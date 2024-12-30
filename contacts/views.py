@@ -15,8 +15,33 @@ from .serializers import (
     BulkContactSerializer,
 )
 
+# swagger parameters
+filter_params = [
+    openapi.Parameter(
+        "query",
+        openapi.IN_QUERY,
+        description="Search query string",
+        type=openapi.TYPE_STRING,
+        required=True,
+    ),
+    openapi.Parameter(
+        "page",
+        openapi.IN_QUERY,
+        description="Page number",
+        type=openapi.TYPE_INTEGER,
+        required=False,
+    ),
+    openapi.Parameter(
+        "size",
+        openapi.IN_QUERY,
+        description="Number of items per page",
+        type=openapi.TYPE_INTEGER,
+        required=False,
+    ),
+]
 
-class SearchView(generics.ListAPIView):
+
+class SearchByNameView(generics.ListAPIView):
     """
     View to search for contacts or users based on a query string.
     """
@@ -24,47 +49,18 @@ class SearchView(generics.ListAPIView):
     serializer_class = SearchResultSerializer
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                "query",
-                openapi.IN_QUERY,
-                description="Search query string",
-                type=openapi.TYPE_STRING,
-                required=True,
-            ),
-            openapi.Parameter(
-                "page",
-                openapi.IN_QUERY,
-                description="Page number",
-                type=openapi.TYPE_INTEGER,
-                required=False,
-            ),
-            openapi.Parameter(
-                "size",
-                openapi.IN_QUERY,
-                description="Number of items per page",
-                type=openapi.TYPE_INTEGER,
-                required=False,
-            ),
-        ]
-    )
+    @swagger_auto_schema(manual_parameters=filter_params)
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         query = self.request.query_params.get("query", "")
-        print(f"Query ==>: {query}")
 
         # Search in User table
-        user_results = User.objects.filter(
-            Q(name__icontains=query) | Q(phone_number__icontains=query)
-        )
+        user_results = User.objects.filter(Q(name__icontains=query))
 
         # Search in Contact table
-        contact_results = Contact.objects.filter(
-            Q(name__icontains=query) | Q(phone_number__icontains=query)
-        )
+        contact_results = Contact.objects.filter(Q(name__icontains=query))
 
         # Combine the results, with User results first
         combined_results = list(user_results) + list(contact_results)
@@ -77,37 +73,13 @@ class SearchView(generics.ListAPIView):
         return combined_results[start:end]
 
 
-class PhoneSearchView(generics.ListAPIView):
+class SearchByPhoneNumberView(generics.ListAPIView):
     """View to search for contacts or users based on a phone number."""
 
     serializer_class = SearchResultSerializer
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                "query",
-                openapi.IN_QUERY,
-                description="Search query string",
-                type=openapi.TYPE_STRING,
-                required=True,
-            ),
-            openapi.Parameter(
-                "page",
-                openapi.IN_QUERY,
-                description="Page number",
-                type=openapi.TYPE_INTEGER,
-                required=False,
-            ),
-            openapi.Parameter(
-                "size",
-                openapi.IN_QUERY,
-                description="Number of items per page",
-                type=openapi.TYPE_INTEGER,
-                required=False,
-            ),
-        ]
-    )
+    @swagger_auto_schema(manual_parameters=filter_params)
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -133,7 +105,43 @@ class PhoneSearchView(generics.ListAPIView):
         return combined_results[start:end]
 
 
-class SpamReportView(generics.CreateAPIView):
+class SearchByNameAndPhoneView(generics.ListAPIView):
+    """
+    View to search for contacts or users based on a query string.
+    """
+
+    serializer_class = SearchResultSerializer
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(manual_parameters=filter_params)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        query = self.request.query_params.get("query", "")
+
+        # Search in User table
+        user_results = User.objects.filter(
+            Q(name__icontains=query) | Q(phone_number__icontains=query)
+        )
+
+        # Search in Contact table
+        contact_results = Contact.objects.filter(
+            Q(name__icontains=query) | Q(phone_number__icontains=query)
+        )
+
+        # Combine the results, with User results first
+        combined_results = list(user_results) + list(contact_results)
+
+        # Pagination
+        page = self.request.query_params.get("page", 1)
+        size = self.request.query_params.get("size", 10)
+        start = (int(page) - 1) * int(size)
+        end = start + int(size)
+        return combined_results[start:end]
+
+
+class ReportSpamView(generics.CreateAPIView):
     """View to report a phone number as spam."""
 
     serializer_class = SpamReportSerializer

@@ -70,7 +70,9 @@ Here's the markdown content for your instructions:
 ## Create a Virtual Environment
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+```bash
+venv\Scripts\activate  # On Linux: source venv/bin/activate
 ```
 
 ## Install Dependencies
@@ -86,6 +88,12 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
+## Testing
+Run tests to ensure correctness:
+```bash
+spamshield> pytest
+```
+
 ## Create a Superuser
 ```bash
 python manage.py createsuperuser
@@ -98,13 +106,7 @@ python manage.py runserver
 
 ## API Documentation
 Swagger UI is configured for interactive API documentation.
-Visit http://127.0.0.1:8000/swagger/ after starting the server. (Set DEBUG=False)
-
-## Testing
-Run tests to ensure correctness:
-```bash
-\spamshield> pytest
-```
+Visit http://127.0.0.1:8000/swagger/ after starting the server. `(Set DEBUG=False) in settings.py`
 
 ## Logging
 Configured logging to capture:
