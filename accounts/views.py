@@ -20,6 +20,11 @@ class UserRegistrationView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """Create a new user."""
+        phone_number = request.data.get('phone_number')
+        if User.objects.filter(phone_number=phone_number).exists():
+            return Response(
+                {"error": "Phone number already exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
