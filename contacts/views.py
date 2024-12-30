@@ -54,7 +54,7 @@ class SearchByNameView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        query = self.request.query_params.get("query", "")
+        query = self.request.query_params.get("query", "").strip()
 
         # Search in User table
         user_results = User.objects.filter(Q(name__icontains=query))
@@ -84,7 +84,7 @@ class SearchByPhoneNumberView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        phone_number = self.request.query_params.get("query", "")
+        phone_number = self.request.query_params.get("query", "").strip()
         if not phone_number:
             return User.objects.none()
 
@@ -118,7 +118,7 @@ class SearchByNameAndPhoneView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        query = self.request.query_params.get("query", "")
+        query = self.request.query_params.get("query", "").strip()
 
         # Search in User table
         user_results = User.objects.filter(
