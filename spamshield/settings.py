@@ -55,6 +55,21 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'JSON_EDITOR': True,
     'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
+    'LOGIN_URL': '/api/v1/login/',  # URL for obtaining the token
+    'LOGIN_PAYLOAD': {
+        'phone_number': 'string',
+        'password': 'string'
+    },
+    'LOGIN_RESPONSE_PAYLOAD': {
+        'refresh': 'string',
+        'access': 'string'
+    },
+    'AUTHORIZATION_HEADER_PREFIX': 'Bearer',
+    'SECURITY_REQUIREMENTS': [
+        {
+            'Bearer': []
+        }
+    ],
 }
 
 AUTH_USER_MODEL = 'accounts.User'

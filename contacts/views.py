@@ -51,6 +51,9 @@ class SearchView(generics.ListAPIView):
             ),
         ]
     )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         query = self.request.query_params.get("query", "")
         print(f"Query ==>: {query}")
@@ -101,6 +104,9 @@ class PhoneSearchView(generics.ListAPIView):
             ),
         ]
     )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         phone_number = self.request.query_params.get("query", "")
         if not phone_number:

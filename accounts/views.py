@@ -31,7 +31,14 @@ class UserLoginView(TokenObtainPairView):
     serializer_class = UserLoginSerializer
 
     @swagger_auto_schema(
-        request_body=UserLoginSerializer,
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "phone_number": openapi.Schema(type=openapi.TYPE_STRING),
+                "password": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=["phone_number", "password"],
+        ),
         responses={
             200: openapi.Response(
                 "Token",

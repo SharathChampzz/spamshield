@@ -29,22 +29,21 @@ schema_view = get_schema_view(
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@yourapi.local"),
         license=openapi.License(name="BSD License"),
-        security=[{'BearerAuth': []}],
+        security=[{"BearerAuth": []}],
         components={
-            'securitySchemes': {
-                'BearerAuth': {
-                    'type': 'http',
-                    'scheme':'bearer',
-                'bearerFormat':'JWT',
+            "securitySchemes": {
+                "BearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
                 }
             }
-        }
-
+        },
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
-    
 )
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -64,6 +63,6 @@ urlpatterns = [
 from django.urls import path, include
 
 urlpatterns += [
-    path('v1/api/', include('accounts.urls')),
-    path('v1/api/', include('contacts.urls')),
+    path("v1/api/", include("accounts.urls")),
+    path("v1/api/", include("contacts.urls")),
 ]
