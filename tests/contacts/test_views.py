@@ -1,12 +1,9 @@
 """Tests for the views of the contacts app."""
 
-import logging
 from django.urls import reverse
 from rest_framework import status
 from tests.factories.factories import UserFactory, ContactFactory, SpamReportFactory
 import pytest
-
-logger = logging.getLogger(__name__)
 
 
 @pytest.mark.django_db
@@ -34,8 +31,6 @@ class TestSearchViews:
         contact = ContactFactory(added_by=user)
 
         url = reverse("search-by-phone")
-        logger.info(f"Phone number: {contact.phone_number}")
-        logger.info(f"URL: {url}")
         response = client.get(f"{url}?query={contact.phone_number}")
 
         assert response.status_code == status.HTTP_200_OK
